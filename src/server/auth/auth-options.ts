@@ -13,6 +13,7 @@ import { db } from "~/server/db";
  */
 export const authOptions: NextAuthConfig = {
   adapter: PrismaAdapter(db),
+  trustHost: true,
   providers: [
     CredentialsProvider({
       name: "credentials",
