@@ -1,7 +1,7 @@
 import Link from "next/link";
 
 import { LatestPost } from "~/app/_components/post";
-import { auth } from "~/server/auth";
+import { auth, signOut } from "~/server/auth";
 import { api, HydrateClient } from "~/trpc/server";
 
 export default async function Home() {
@@ -47,6 +47,39 @@ export default async function Home() {
             <p className="text-2xl text-white">
               {hello ? hello.greeting : "Loading tRPC query..."}
             </p>
+            
+            <div className="flex gap-4 mt-4">
+              {session?.user ? (
+                <div className="flex flex-col items-center gap-2">
+                  <p className="text-xl">Welcome, {session.user.name ?? session.user.email}!</p>
+                  <form
+                    action={async () => {
+                      "use server";
+                      await signOut();
+                    }}
+                  >
+                    <button className="rounded-full bg-white/10 px-10 py-3 font-semibold text-white no-underline transition hover:bg-white/20">
+                      Sign out
+                    </button>
+                  </form>
+                </div>
+              ) : (
+                <div className="flex gap-4">
+                  <Link
+                    href="/signin"
+                    className="rounded-full bg-white/10 px-10 py-3 font-semibold text-white no-underline transition hover:bg-white/20"
+                  >
+                    Sign In
+                  </Link>
+                  <Link
+                    href="/signup"
+                    className="rounded-full bg-white/10 px-10 py-3 font-semibold text-white no-underline transition hover:bg-white/20"
+                  >
+                    Sign Up
+                  </Link>
+                </div>
+              )}
+            </div>
 
             <div className="flex flex-col items-center justify-center gap-4">
               <p className="text-center text-2xl text-white">
