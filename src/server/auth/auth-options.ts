@@ -1,3 +1,4 @@
+// src/server/auth/auth-options.ts
 import { PrismaAdapter } from "@auth/prisma-adapter";
 import { compare } from "bcryptjs";
 import { type NextAuthConfig } from "next-auth";
@@ -65,4 +66,8 @@ export const authOptions: NextAuthConfig = {
   session: {
     strategy: "jwt"
   },
+  // Make sure to have a good secret for production
+  secret: process.env.AUTH_SECRET,
+  // Enable debug in development
+  debug: process.env.NODE_ENV === "development",
 };
