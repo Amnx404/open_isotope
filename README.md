@@ -1,29 +1,69 @@
-# Create T3 App
+# LiteLLM Proxy with PayU Integration
 
-This is a [T3 Stack](https://create.t3.gg/) project bootstrapped with `create-t3-app`.
+A unified API proxy service for LLM providers with seamless PayU wallet integration. This service allows you to manage multiple LLM providers through a single endpoint while handling payments and usage tracking efficiently.
 
-## What's next? How do I make an app with this?
+## Features
 
-We try to keep this project as simple as possible, so you can start with just the scaffolding we set up for you, and add additional things later when they become necessary.
+- **Unified API Access**: Single endpoint for multiple LLM providers
+- **PayU Integration**: Secure wallet-based payment processing
+- **Usage Analytics**: Track API usage and costs
+- **User Authentication**: Secure access with NextAuth.js
+- **Modern Tech Stack**: Built with T3 Stack (Next.js, tRPC, Prisma, Tailwind CSS)
 
-If you are not familiar with the different technologies used in this project, please refer to the respective docs. If you still are in the wind, please join our [Discord](https://t3.gg/discord) and ask for help.
+## Getting Started
 
-- [Next.js](https://nextjs.org)
-- [NextAuth.js](https://next-auth.js.org)
-- [Prisma](https://prisma.io)
-- [Drizzle](https://orm.drizzle.team)
-- [Tailwind CSS](https://tailwindcss.com)
-- [tRPC](https://trpc.io)
+### Prerequisites
 
-## Learn More
+- Node.js 18+ 
+- PostgreSQL database
+- PayU merchant account
 
-To learn more about the [T3 Stack](https://create.t3.gg/), take a look at the following resources:
+### Installation
 
-- [Documentation](https://create.t3.gg/)
-- [Learn the T3 Stack](https://create.t3.gg/en/faq#what-learning-resources-are-currently-available) — Check out these awesome tutorials
+1. Clone the repository
+2. Install dependencies:
+   ```bash
+   npm install
+   ```
+3. Copy the example environment file:
+   ```bash
+   cp .env.example .env
+   ```
+4. Configure your environment variables in `.env`
+5. Initialize the database:
+   ```bash
+   npm run db:push
+   ```
+6. Start the development server:
+   ```bash
+   npm run dev
+   ```
 
-You can check out the [create-t3-app GitHub repository](https://github.com/t3-oss/create-t3-app) — your feedback and contributions are welcome!
+## Configuration
 
-## How do I deploy this?
+The following environment variables are required:
 
-Follow our deployment guides for [Vercel](https://create.t3.gg/en/deployment/vercel), [Netlify](https://create.t3.gg/en/deployment/netlify) and [Docker](https://create.t3.gg/en/deployment/docker) for more information.
+- `DATABASE_URL`: Your PostgreSQL connection string
+- `NEXTAUTH_SECRET`: Secret for NextAuth.js
+- `PAYU_MERCHANT_KEY`: Your PayU merchant key
+- `PAYU_MERCHANT_SALT`: Your PayU merchant salt
+
+## API Usage
+
+Once set up, you can access the LLM providers through our unified API endpoint. Detailed API documentation is available in the dashboard after signing in.
+
+## Tech Stack
+
+- [Next.js](https://nextjs.org) - React framework
+- [NextAuth.js](https://next-auth.js.org) - Authentication
+- [Prisma](https://prisma.io) - Database ORM
+- [tRPC](https://trpc.io) - End-to-end typesafe APIs
+- [Tailwind CSS](https://tailwindcss.com) - Styling
+
+## Contributing
+
+Contributions are welcome! Please feel free to submit a Pull Request.
+
+## License
+
+This project is licensed under the MIT License - see the LICENSE file for details.
