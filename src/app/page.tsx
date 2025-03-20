@@ -1,102 +1,79 @@
 import Link from "next/link";
-
-import { LatestPost } from "~/app/_components/post";
-import { auth, signOut } from "~/server/auth";
-import { api, HydrateClient } from "~/trpc/server";
+import { auth } from "~/server/auth";
+import { redirect } from "next/navigation";
 
 export default async function Home() {
-  const hello = await api.post.hello({ text: "from tRPC" });
   const session = await auth();
 
   if (session?.user) {
-    void api.post.getLatest.prefetch();
+    redirect("/dashboard");
   }
 
   return (
-    <HydrateClient>
-      <main className="flex min-h-screen flex-col items-center justify-center bg-gradient-to-b from-[#2e026d] to-[#15162c] text-white">
-        <div className="container flex flex-col items-center justify-center gap-12 px-4 py-16">
-          <h1 className="text-5xl font-extrabold tracking-tight sm:text-[5rem]">
-            Create <span className="text-[hsl(280,100%,70%)]">T3</span> App
+    <main className="min-h-screen bg-gradient-to-b from-background to-secondary">
+      <div className="container mx-auto px-4 py-16">
+        <nav className="flex justify-end mb-16">
+          <div className="flex gap-4">
+            <Link
+              href="/signin"
+              className="rounded-md bg-primary/10 px-4 py-2 text-sm font-medium text-primary hover:bg-primary/20 transition"
+            >
+              Sign In
+            </Link>
+            <Link
+              href="/signup"
+              className="rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground hover:bg-primary/90 transition"
+            >
+              Sign Up
+            </Link>
+          </div>
+        </nav>
+
+        <div className="max-w-4xl mx-auto text-center">
+          <h1 className="text-5xl font-bold tracking-tight sm:text-6xl mb-6">
+            LiteLLM Proxy with PayU Integration
           </h1>
-          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:gap-8">
+          <p className="text-xl text-muted-foreground mb-12">
+            A unified API proxy service for LLM providers with seamless PayU wallet integration.
+            Manage your AI costs efficiently and securely.
+          </p>
+          <div className="flex justify-center gap-4">
             <Link
-              className="flex max-w-xs flex-col gap-4 rounded-xl bg-white/10 p-4 hover:bg-white/20"
-              href="https://create.t3.gg/en/usage/first-steps"
-              target="_blank"
+              href="/signup"
+              className="rounded-md bg-primary px-8 py-3 text-lg font-semibold text-primary-foreground hover:bg-primary/90 transition"
             >
-              <h3 className="text-2xl font-bold">First Steps →</h3>
-              <div className="text-lg">
-                Just the basics - Everything you need to know to set up your
-                database and authentication.
-              </div>
+              Get Started
             </Link>
             <Link
-              className="flex max-w-xs flex-col gap-4 rounded-xl bg-white/10 p-4 hover:bg-white/20"
-              href="https://create.t3.gg/en/introduction"
-              target="_blank"
+              href="#features"
+              className="rounded-md bg-secondary px-8 py-3 text-lg font-semibold text-secondary-foreground hover:bg-secondary/80 transition"
             >
-              <h3 className="text-2xl font-bold">Documentation →</h3>
-              <div className="text-lg">
-                Learn more about Create T3 App, the libraries it uses, and how
-                to deploy it.
-              </div>
+              Learn More
             </Link>
           </div>
-          <div className="flex flex-col items-center gap-2">
-            <p className="text-2xl text-white">
-              {hello ? hello.greeting : "Loading tRPC query..."}
-            </p>
-            
-            <div className="flex gap-4 mt-4">
-              {session?.user ? (
-                <div className="flex flex-col items-center gap-2">
-                  <p className="text-xl">Welcome, {session.user.name ?? session.user.email}!</p>
-                  <form
-                    action={async () => {
-                      "use server";
-                      await signOut();
-                    }}
-                  >
-                    <button className="rounded-full bg-white/10 px-10 py-3 font-semibold text-white no-underline transition hover:bg-white/20">
-                      Sign out
-                    </button>
-                  </form>
-                </div>
-              ) : (
-                <div className="flex gap-4">
-                  <Link
-                    href="/signin"
-                    className="rounded-full bg-white/10 px-10 py-3 font-semibold text-white no-underline transition hover:bg-white/20"
-                  >
-                    Sign In
-                  </Link>
-                  <Link
-                    href="/signup"
-                    className="rounded-full bg-white/10 px-10 py-3 font-semibold text-white no-underline transition hover:bg-white/20"
-                  >
-                    Sign Up
-                  </Link>
-                </div>
-              )}
-            </div>
-
-            <div className="flex flex-col items-center justify-center gap-4">
-              <p className="text-center text-2xl text-white">
-                {session && <span>Logged in as {session.user?.name}</span>}
-              </p>
-              <Link
-                href={session ? "/api/auth/signout" : "/api/auth/signin"}
-                className="rounded-full bg-white/10 px-10 py-3 font-semibold no-underline transition hover:bg-white/20"
-              >
-                {session ? "Sign out" : "Sign in"}
-              </Link>
-            </div>
-          </div>
-
-          {session?.user && <LatestPost />}
         </div>
-      </main>
-    </HydrateClient>
+
+        <div id="features" className="mt-24 grid grid-cols-1 md:grid-cols-3 gap-8">
+          <div className="p-6 rounded-lg bg-card">
+            <h3 className="text-xl font-semibold mb-3">Unified API Access</h3>
+            <p className="text-muted-foreground">
+              Single endpoint for multiple LLM providers. Simplify your integration and switch providers seamlessly.
+            </p>
+          </div>
+          <div className="p-6 rounded-lg bg-card">
+            <h3 className="text-xl font-semibold mb-3">Secure Payments</h3>
+            <p className="text-muted-foreground">
+              Integrated PayU wallet for secure and convenient payment processing. Monitor and manage your API usage costs.
+            </p>
+          </div>
+          <div className="p-6 rounded-lg bg-card">
+            <h3 className="text-xl font-semibold mb-3">Usage Analytics</h3>
+            <p className="text-muted-foreground">
+              Detailed insights into your API usage, costs, and performance metrics. Make informed decisions.
+            </p>
+          </div>
+        </div>
+      </div>
+    </main>
   );
 }

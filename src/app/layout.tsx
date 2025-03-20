@@ -17,7 +17,7 @@ export default function RootLayout({
 }: Readonly<{ children: React.ReactNode }>) {
   return (
     <html lang="en" className={`${GeistSans.variable}`}>
-      <body>
+      <body suppressHydrationWarning={true} className="min-h-screen bg-background text-foreground antialiased">
         <NextAuthProvider>
           <TRPCReactProvider>{children}</TRPCReactProvider>
         </NextAuthProvider>

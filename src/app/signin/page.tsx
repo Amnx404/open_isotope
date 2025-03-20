@@ -13,16 +13,20 @@ export default async function SignInPage() {
   }
 
   return (
-    <div className="flex min-h-screen flex-col items-center justify-center bg-gradient-to-b from-[#2e026d] to-[#15162c] text-white">
+    <div className="flex min-h-screen flex-col items-center justify-center bg-gradient-to-b from-primary to-primary/80 text-primary-foreground">
       <div className="container flex flex-col items-center justify-center gap-8 px-4 py-16">
         <h1 className="text-4xl font-extrabold tracking-tight">Sign In</h1>
-        <SignInForm />
-        <p className="text-sm">
-          Don't have an account?{" "}
-          <Link href="/signup" className="text-blue-400 hover:text-blue-300">
-            Sign up
-          </Link>
-        </p>
+        <div className="bg-card text-card-foreground rounded-lg shadow-lg p-6 w-full max-w-md">
+          <SignInForm />
+          <div className="mt-4 text-center">
+            <p className="text-sm text-muted-foreground">
+              Don't have an account?{" "}
+              <Link href="/signup" className="text-primary hover:text-primary/80 font-medium">
+                Sign up
+              </Link>
+            </p>
+          </div>
+        </div>
       </div>
     </div>
   );

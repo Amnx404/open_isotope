@@ -18,12 +18,42 @@ export async function POST(req: Request) {
     // Check if user already exists
     const existingUser = await db.user.findUnique({
       where: { email },
+      include: {
+        accounts: true,
+      },
     });
 
     if (existingUser) {
+      // If user exists with Google provider
+      if (existingUser.accounts.some(account => account.provider === "google")) {
+        return NextResponse.json(
+          { error: "An account with this email already exists. Please sign in with Google." },
+          { status: 400 },
+        );
+      }
+      
+      // If user exists with password
+      if (existingUser.password) {
+        return NextResponse.json(
+          { error: "User already exists" },
+          { status: 400 },
+        );
+      }
+      
+      // Edge case: If user exists without password (possible incomplete registration)
+      // Update the user with a password
+      const hashedPassword = await hash(password, 12);
+      const updatedUser = await db.user.update({
+        where: { id: existingUser.id },
+        data: {
+          password: hashedPassword,
+          name: name || existingUser.name,
+        },
+      });
+      
       return NextResponse.json(
-        { error: "User already exists" },
-        { status: 400 },
+        { message: "Account updated successfully", userId: updatedUser.id },
+        { status: 200 },
       );
     }
 
