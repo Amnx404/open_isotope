@@ -61,9 +61,11 @@ model User {
     password      String?
     emailVerified DateTime?
     image         String?
+    credits       Int       @default(0)
     accounts      Account[]
     sessions      Session[]
     posts         Post[]
+    transactions  Transaction[]
 }
 
 model VerificationToken {
@@ -72,4 +74,20 @@ model VerificationToken {
     expires    DateTime
 
     @@unique([identifier, token])
+}
+
+model Transaction {
+    id              String   @id
+    amount          Decimal  @db.Decimal(10,2)
+    currency        String
+    status          String
+    paymentProvider String
+    paymentId       String?
+    userId          String
+    createdAt       DateTime @default(now())
+    updatedAt       DateTime @updatedAt
+    user            User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+    @@index([userId])
+    @@index([status])
 }
