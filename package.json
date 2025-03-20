@@ -21,7 +21,6 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-    "@api/payu-hosted-checkout": "file:.api/apis/payu-hosted-checkout",
     "@auth/prisma-adapter": "^2.7.2",
     "@hookform/resolvers": "^4.1.3",
     "@prisma/client": "^5.14.0",
