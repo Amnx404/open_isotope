@@ -1,9 +1,8 @@
 // src/server/auth/auth-options.ts
 import { PrismaAdapter } from "@auth/prisma-adapter";
-import { type NextAuthConfig } from "next-auth";
+import { type NextAuthConfig, type Session } from "next-auth";
+import { JWT } from "next-auth/jwt";
 import GoogleProvider from "next-auth/providers/google";
-import CredentialsProvider from "next-auth/providers/credentials";
-import bcrypt from "bcryptjs";
 
 import { db } from "~/server/db";
 
@@ -19,43 +18,6 @@ export const authOptions: NextAuthConfig = {
     GoogleProvider({
       clientId: process.env.GOOGLE_CLIENT_ID,
       clientSecret: process.env.GOOGLE_CLIENT_SECRET
-    }),
-    CredentialsProvider({
-      name: "credentials",
-      credentials: {
-        email: { label: "Email", type: "email" },
-        password: { label: "Password", type: "password" }
-      },
-      async authorize(credentials) {
-        if (!credentials?.email || !credentials?.password) {
-          throw new Error("Please enter your email and password");
-        }
-
-        const user = await db.user.findUnique({
-          where: { email: credentials.email }
-        });
-
-        // If no user is found at all
-        if (!user) {
-          throw new Error("No user found with this email");
-        }
-
-        // If user exists but no password (Google sign-in user)
-        if (!user.password) {
-          throw new Error("This account uses Google to sign in. Please sign in with Google.");
-        }
-
-        const isPasswordValid = await bcrypt.compare(
-          credentials.password,
-          user.password
-        );
-
-        if (!isPasswordValid) {
-          throw new Error("Invalid password");
-        }
-
-        return user;
-      }
     })
   ],
   callbacks: {
@@ -118,7 +80,7 @@ export const authOptions: NextAuthConfig = {
       }
       return token;
     },
-    session: ({ session, token }) => ({
+    session: ({ session, token }: { session: any; token: JWT }): Session => ({
       ...session,
       user: {
         ...session.user,

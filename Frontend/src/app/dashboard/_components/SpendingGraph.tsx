@@ -30,7 +30,7 @@ export function SpendingGraph() {
               <Line
                 type="monotone"
                 dataKey="amount"
-                stroke="hsl(var(--chart-1))"
+                stroke="hsl(var(--primary))"
                 strokeWidth={2}
               />
             </LineChart>
