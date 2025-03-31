@@ -70,3 +70,88 @@ model VerificationToken {
 
     @@unique([identifier, token])
 }
+
+
+// Wallet and API management
+
+model Wallet {
+    id           String        @id @default(cuid())
+    balance      Decimal       @default(0)
+    currency     String        @default("USD")
+    createdAt    DateTime      @default(now())
+    updatedAt    DateTime      @updatedAt
+    
+    // Relations
+    userId       String        @unique
+    user         User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+    transactions Transaction[]
+}
+
+model Transaction {
+    id          String            @id @default(cuid())
+    amount      Decimal
+    type        TransactionType
+    status      TransactionStatus @default(PENDING)
+    referenceId String?           // Payment gateway reference
+    description String?
+    createdAt   DateTime          @default(now())
+    
+    // Relations
+    walletId    String
+    wallet      Wallet            @relation(fields: [walletId], references: [id])
+    userId      String
+    user        User              @relation(fields: [userId], references: [id])
+
+    @@index([userId])
+    @@index([walletId])
+    @@index([createdAt])
+}
+
+enum TransactionType {
+    DEPOSIT
+    WITHDRAWAL
+    USAGE_PAYMENT
+}
+
+enum TransactionStatus {
+    PENDING
+    COMPLETED
+    FAILED
+}
+
+model APIKey {
+    id          String      @id @default(cuid())
+    name        String      // User-friendly name for the key
+    provider    String      // e.g., "OpenAI", "Anthropic"
+    keyValue    String      // Encrypted API key value
+    isActive    Boolean     @default(true)
+    expiresAt   DateTime?
+    usageLimit  Decimal?    // Optional spending limit
+    createdAt   DateTime    @default(now())
+    updatedAt   DateTime    @updatedAt
+    
+    // Relations
+    userId      String
+    user        User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+    usage       APIUsage[]
+
+    @@index([userId])
+}
+
+model APIUsage {
+    id               String    @id @default(cuid())
+    model            String    // e.g., "gpt-4", "claude-3"
+    tokenCount       Int       // Total tokens used
+    promptTokens     Int       // Tokens in the prompt
+    completionTokens Int       // Tokens in the completion
+    cost             Decimal   // Cost of this usage
+    timestamp        DateTime  @default(now())
+    requestId        String?   // To track specific requests
+    
+    // Relations
+    apiKeyId         String
+    apiKey           APIKey    @relation(fields: [apiKeyId], references: [id], onDelete: Cascade)
+    
+    @@index([apiKeyId])
+    @@index([timestamp])
+}
