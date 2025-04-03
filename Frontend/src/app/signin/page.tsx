@@ -20,8 +20,8 @@ export default async function SignInPage() {
           <SignInForm />
           <div className="mt-4 text-center">
             <p className="text-sm text-muted-foreground">
-              Don't have an account?{" "}
-              <Link href="/signup" className="text-primary hover:text-primary/80 font-medium">
+              Don&apos;t have an account?{" "}
+              <Link href="/signup" className="font-medium text-primary hover:underline">
                 Sign up
               </Link>
             </p>

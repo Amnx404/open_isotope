@@ -1,7 +1,6 @@
 import "~/styles/globals.css";
 import { GeistSans } from "geist/font/sans";
 import { type Metadata } from "next";
-import { headers } from "next/headers";
 
 import { TRPCReactProvider } from "~/trpc/react";
 import { NextAuthProvider } from "~/app/_components/auth-provider";
@@ -14,7 +13,9 @@ export const metadata: Metadata = {
 
 export default function RootLayout({
   children,
-}: Readonly<{ children: React.ReactNode }>) {
+}: {
+  children: React.ReactNode;
+}) {
   return (
     <html lang="en" className={`${GeistSans.variable}`}>
       <body suppressHydrationWarning={true} className="min-h-screen bg-background text-foreground antialiased">

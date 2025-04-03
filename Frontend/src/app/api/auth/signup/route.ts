@@ -12,7 +12,7 @@ const signUpSchema = z.object({
 
 export async function POST(req: Request) {
   try {
-    const body = await req.json();
+    const body: unknown = await req.json();
     const { email, password, name } = signUpSchema.parse(body);
 
     // Check if user already exists
@@ -47,7 +47,7 @@ export async function POST(req: Request) {
         where: { id: existingUser.id },
         data: {
           password: hashedPassword,
-          name: name || existingUser.name,
+          name: name ?? existingUser.name,
         },
       });
       
