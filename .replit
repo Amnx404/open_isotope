@@ -1,0 +1,41 @@
+modules = ["nodejs-20", "web", "bash"]
+run = "npm run dev"
+
+[nix]
+channel = "stable-24_05"
+
+[deployment]
+run = ["sh", "-c", "npm run dev"]
+
+[workflows]
+runButton = "Start Frontend"
+
+[[workflows.workflow]]
+name = "Start Frontend"
+mode = "sequential"
+author = 11636929
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "cd Frontend"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "npm run dev"
+
+[[workflows.workflow]]
+name = "Install"
+mode = "sequential"
+author = 11636929
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "cd Frontend"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "npm install"
+
+[[ports]]
+localPort = 3000
+externalPort = 80

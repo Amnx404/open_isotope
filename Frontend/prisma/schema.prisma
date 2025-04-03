@@ -12,146 +12,148 @@ datasource db {
 }
 
 model Post {
-    id        Int      @id @default(autoincrement())
-    name      String
-    createdAt DateTime @default(now())
-    updatedAt DateTime @updatedAt
+  id        Int      @id @default(autoincrement())
+  name      String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
-    createdBy   User   @relation(fields: [createdById], references: [id])
-    createdById String
+  createdBy   User   @relation(fields: [createdById], references: [id])
+  createdById String
 
-    @@index([name])
+  @@index([name])
 }
 
 // Necessary for Next auth
 model Account {
-    id                       String  @id @default(cuid())
-    userId                   String
-    type                     String
-    provider                 String
-    providerAccountId        String
-    refresh_token            String? // @db.Text
-    access_token             String? // @db.Text
-    expires_at               Int?
-    token_type               String?
-    scope                    String?
-    id_token                 String? // @db.Text
-    session_state            String?
-    user                     User    @relation(fields: [userId], references: [id], onDelete: Cascade)
-    refresh_token_expires_in Int?
+  id                       String  @id @default(cuid())
+  userId                   String
+  type                     String
+  provider                 String
+  providerAccountId        String
+  refresh_token            String? // @db.Text
+  access_token             String? // @db.Text
+  expires_at               Int?
+  token_type               String?
+  scope                    String?
+  id_token                 String? // @db.Text
+  session_state            String?
+  user                     User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  refresh_token_expires_in Int?
 
-    @@unique([provider, providerAccountId])
+  @@unique([provider, providerAccountId])
 }
 
 model Session {
-    id           String   @id @default(cuid())
-    sessionToken String   @unique
-    userId       String
-    expires      DateTime
-    user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 model User {
-    id            String    @id @default(cuid())
-    name          String?
-    email         String    @unique
-    password      String?
-    emailVerified DateTime?
-    image         String?
-    accounts      Account[]
-    sessions      Session[]
-    posts         Post[]
+  id            String        @id @default(cuid())
+  name          String?
+  email         String        @unique
+  password      String?
+  emailVerified DateTime?
+  image         String?
+  accounts      Account[]
+  sessions      Session[]
+  posts         Post[]
+  Wallet        Wallet?
+  Transaction   Transaction[]
+  APIKey        APIKey[]
 }
 
 model VerificationToken {
-    identifier String
-    token      String   @unique
-    expires    DateTime
+  identifier String
+  token      String   @unique
+  expires    DateTime
 
-    @@unique([identifier, token])
+  @@unique([identifier, token])
 }
-
 
 // Wallet and API management
 
 model Wallet {
-    id           String        @id @default(cuid())
-    balance      Decimal       @default(0)
-    currency     String        @default("USD")
-    createdAt    DateTime      @default(now())
-    updatedAt    DateTime      @updatedAt
-    
-    // Relations
-    userId       String        @unique
-    user         User          @relation(fields: [userId], references: [id], onDelete: Cascade)
-    transactions Transaction[]
+  id        String   @id @default(cuid())
+  balance   Decimal  @default(0)
+  currency  String   @default("USD")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relations
+  userId       String        @unique
+  user         User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  transactions Transaction[]
 }
 
 model Transaction {
-    id          String            @id @default(cuid())
-    amount      Decimal
-    type        TransactionType
-    status      TransactionStatus @default(PENDING)
-    referenceId String?           // Payment gateway reference
-    description String?
-    createdAt   DateTime          @default(now())
-    
-    // Relations
-    walletId    String
-    wallet      Wallet            @relation(fields: [walletId], references: [id])
-    userId      String
-    user        User              @relation(fields: [userId], references: [id])
+  id          String            @id @default(cuid())
+  amount      Decimal
+  type        TransactionType
+  status      TransactionStatus @default(PENDING)
+  referenceId String? // Payment gateway reference
+  description String?
+  createdAt   DateTime          @default(now())
 
-    @@index([userId])
-    @@index([walletId])
-    @@index([createdAt])
+  // Relations
+  walletId String
+  wallet   Wallet @relation(fields: [walletId], references: [id])
+  userId   String
+  user     User   @relation(fields: [userId], references: [id])
+
+  @@index([userId])
+  @@index([walletId])
+  @@index([createdAt])
 }
 
 enum TransactionType {
-    DEPOSIT
-    WITHDRAWAL
-    USAGE_PAYMENT
+  DEPOSIT
+  WITHDRAWAL
+  USAGE_PAYMENT
 }
 
 enum TransactionStatus {
-    PENDING
-    COMPLETED
-    FAILED
+  PENDING
+  COMPLETED
+  FAILED
 }
 
 model APIKey {
-    id          String      @id @default(cuid())
-    name        String      // User-friendly name for the key
-    provider    String      // e.g., "OpenAI", "Anthropic"
-    keyValue    String      // Encrypted API key value
-    isActive    Boolean     @default(true)
-    expiresAt   DateTime?
-    usageLimit  Decimal?    // Optional spending limit
-    createdAt   DateTime    @default(now())
-    updatedAt   DateTime    @updatedAt
-    
-    // Relations
-    userId      String
-    user        User        @relation(fields: [userId], references: [id], onDelete: Cascade)
-    usage       APIUsage[]
+  id         String    @id @default(cuid())
+  name       String // User-friendly name for the key
+  provider   String // e.g., "OpenAI", "Anthropic"
+  keyValue   String // Encrypted API key value
+  isActive   Boolean   @default(true)
+  expiresAt  DateTime?
+  usageLimit Decimal? // Optional spending limit
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
 
-    @@index([userId])
+  // Relations
+  userId String
+  user   User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  usage  APIUsage[]
+
+  @@index([userId])
 }
 
 model APIUsage {
-    id               String    @id @default(cuid())
-    model            String    // e.g., "gpt-4", "claude-3"
-    tokenCount       Int       // Total tokens used
-    promptTokens     Int       // Tokens in the prompt
-    completionTokens Int       // Tokens in the completion
-    cost             Decimal   // Cost of this usage
-    timestamp        DateTime  @default(now())
-    requestId        String?   // To track specific requests
-    
-    // Relations
-    apiKeyId         String
-    apiKey           APIKey    @relation(fields: [apiKeyId], references: [id], onDelete: Cascade)
-    
-    @@index([apiKeyId])
-    @@index([timestamp])
+  id               String   @id @default(cuid())
+  model            String // e.g., "gpt-4", "claude-3"
+  tokenCount       Int // Total tokens used
+  promptTokens     Int // Tokens in the prompt
+  completionTokens Int // Tokens in the completion
+  cost             Decimal // Cost of this usage
+  timestamp        DateTime @default(now())
+  requestId        String? // To track specific requests
+
+  // Relations
+  apiKeyId String
+  apiKey   APIKey @relation(fields: [apiKeyId], references: [id], onDelete: Cascade)
+
+  @@index([apiKeyId])
+  @@index([timestamp])
 }
